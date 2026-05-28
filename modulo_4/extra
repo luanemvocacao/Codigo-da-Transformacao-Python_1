@@ -1,0 +1,27 @@
+while True:
+    print("\n========= MENU =========")
+    print("1. Soma")
+    print("2. Subtração")
+    print("3. Sair")
+    print("========================")
+    
+    opcao = input("Escolha uma opção (1/2/3): ")
+    
+    if opcao == "3":
+        print("Saindo do programa... Até logo!")
+        break  # Encerra o loop while
+        
+    elif opcao == "1" or opcao == "2":
+        # Se escolheu uma operação válida, pede os números
+        v1 = float(input("Digite o primeiro número: "))
+        v2 = float(input("Digite o segundo número: "))
+        
+        if opcao == "1":
+            resultado = v1 + v2
+            print(f"\n> Resultado da Soma: {v1} + {v2} = {resultado}")
+        elif opcao == "2":
+            resultado = v1 - v2
+            print(f"\n> Resultado da Subtração: {v1} - {v2} = {resultado}")
+            
+    else:
+        print("\n[Erro] Opção inválida! Tente novamente.")
