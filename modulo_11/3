@@ -1,0 +1,37 @@
+# Modulo_10/atv3_tratar_erros.py
+import requests # type: ignore
+
+def buscar_clima_com_tratamento(cidade):
+    API_KEY = "SUA_API_KEY_AQUI"
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={API_KEY}&units=metric&lang=pt_br"
+    
+    try:
+        # Define um tempo máximo de espera de 8 segundos antes de estourar timeout
+        resposta = requests.get(url, timeout=8)
+        
+        # Se o status code for um erro (4xx ou 5xx), joga o fluxo direto para o except HTTPError
+        resposta.raise_for_status()
+        
+        dados = resposta.json()
+        print(f"✓ Conexão bem-sucedida! Temperatura em {dados['name']}: {dados['main']['temp']}°C")
+        
+    except requests.exceptions.HTTPError as erro_http:
+        if resposta.status_code == 404:
+            print("❌ Erro de Requisição (404): Cidade não encontrada. Verifique se digitou corretamente.")
+        elif resposta.status_code == 401:
+            print("❌ Erro de Autenticação (401): Sua API Key está incorreta ou expirada.")
+        else:
+            print(f"❌ Erro HTTP retornado pelo servidor: {erro_http}")
+            
+    except requests.exceptions.ConnectionError:
+        print("❌ Erro de Conexão: Não foi possível se conectar à internet ou ao servidor da API.")
+        
+    except requests.exceptions.Timeout:
+        print("❌ Erro de Tempo Limite: O servidor demorou muito para responder. Conexão lenta.")
+        
+    except Exception as erro_inesperado:
+        print(f"❌ Ocorreu um erro desconhecido no sistema: {erro_inesperado}")
+
+if __name__ == "__main__":
+    cidade_teste = input("Digite a cidade para testar as exceções: ").strip()
+    buscar_clima_com_tratamento(cidade_teste)

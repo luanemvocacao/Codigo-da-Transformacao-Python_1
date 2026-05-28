@@ -1,0 +1,32 @@
+# Modulo_10/atv2_exibir_dados.py
+import requests # type: ignore
+
+def exibir_clima_filtrado(cidade):
+    API_KEY = "SUA_API_KEY_AQUI"
+    # Adicionado '&units=metric' para Celsius e '&lang=pt_br' para português
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={API_KEY}&units=metric&lang=pt_br"
+    
+    resposta = requests.get(url)
+    
+    if resposta.status_code == 200:
+        dados = resposta.json()
+        
+        # Filtrando informações específicas dentro do JSON
+        nome = dados["name"]
+        temp = dados["main"]["temp"]
+        umidade = dados["main"]["humidity"]
+        condicao = dados["weather"][0]["description"]
+        
+        # Exibindo os dados de forma organizada
+        print(f"\n====== CLIMA EM {nome.upper()} ======")
+        print(f"• Temperatura Atual: {temp}°C")
+        print(f"• Umidade do Ar: {umidade}%")
+        print(f"• Condição do Tempo: {condicao.capitalize()}")
+        print("================================")
+    else:
+        print("Não foi possível extrair os dados desta cidade.")
+
+if __name__ == "__main__":
+    cidade_busca = input("Digite a cidade para filtrar os dados: ").strip()
+    if cidade_busca:
+        exibir_clima_filtrado(cidade_busca)

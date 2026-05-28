@@ -1,0 +1,19 @@
+# Modulo_10/atv1_consumo_api.py
+import requests # type: ignore
+
+def testar_conexao_api(cidade):
+    # Substitua pela sua chave válida do OpenWeatherMap se necessário
+    API_KEY = "SUA_API_KEY_AQUI"
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={API_KEY}"
+    
+    print(f"Enviando requisição HTTP para buscar o clima de: {cidade}...")
+    resposta = requests.get(url)
+    
+    if resposta.status_code == 200:
+        print("✓ Conexão bem-sucedida! Dados recebidos.")
+        print(resposta.text)  # Mostra o texto bruto do JSON
+    else:
+        print(f"❌ Falha na requisição. Código de status HTTP: {resposta.status_code}")
+
+if __name__ == "__main__":
+    testar_conexao_api("Sao Paulo")
