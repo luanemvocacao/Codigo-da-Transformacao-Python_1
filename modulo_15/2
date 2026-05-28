@@ -1,0 +1,10 @@
+# Modulo_14/produtos/urls.py
+from django.urls import path # type: ignore
+from . import views # type: ignore
+
+urlpatterns = [
+    path('', views.listar_produtos, name='listar_produtos'),
+    path('novo/', views.cadastrar_produto, name='cadastrar_produto'),
+    path('editar/<int:pk>/', views.atualizar_produto, name='atualizar_produto'),
+    path('excluir/<int:pk>/', views.excluir_produto, name='excluir_produto'),
+]
