@@ -1,0 +1,18 @@
+def maior_menor(lista_numeros):
+    """Retorna o maior e o menor valor encontrados em uma lista."""
+    if not lista_numeros:
+        return None, None
+        
+    maior = max(lista_numeros)
+    menor = min(lista_numeros)
+    return maior, menor
+
+# --- Testando a função ---
+valores = [42, 7, 19, 99, 3, 50]
+print(f"Lista analisada: {valores}")
+
+# Recebendo os dois valores retornados pela função
+resultado_maior, resultado_menor = maior_menor(valores)
+
+print(f"O maior número é: {resultado_maior}")
+print(f"O menor número é: {resultado_menor}")

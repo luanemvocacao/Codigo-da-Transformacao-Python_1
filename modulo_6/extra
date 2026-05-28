@@ -1,0 +1,27 @@
+# Banco de dados simulado contendo usuários e suas respectivas senhas
+usuarios_cadastrados = {
+    "admin": "1234",
+    "gabriel": "python99",
+    "maria_silva": "senhaSegura!2"
+}
+
+def validar_login(usuario, senha):
+    """Valida se as credenciais existem e coincidem com o banco de dados."""
+    # Verifica se o usuário existe nas chaves do dicionário
+    if usuario in usuarios_cadastrados:
+        # Se existir, valida se a senha informada bate com a cadastrada
+        if usuarios_cadastrados[usuario] == senha:
+            return True
+            
+    return False
+
+# --- Fluxo de Execução do Sistema ---
+print("====== SISTEMA DE ACESSO ======")
+user_input = input("Usuário: ").strip()
+password_input = input("Senha: ").strip()
+
+# Chamada da função passando os dados digitados
+if validar_login(user_input, password_input):
+    print(f"\n[Acesso Permitido] Bem-vindo de volta, {user_input}!")
+else:
+    print("\n[Erro de Autenticação] Usuário ou senha incorretos.")
