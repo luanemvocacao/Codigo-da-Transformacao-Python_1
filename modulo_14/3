@@ -1,0 +1,60 @@
+# Modulo_13/atv3_integracao_sqlite.py
+import sqlite3
+from flask import Flask, jsonify, request # type: ignore
+
+app = Flask(__name__)
+DB_NAME = "banco_usuarios.db"
+
+def inicializar_banco():
+    """Garante a infraestrutura inicial e cria a tabela se não existir."""
+    conexao = sqlite3.connect(DB_NAME)
+    cursor = conexao.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE
+        )
+    """)
+    conexao.commit()
+    conexao.close()
+
+@app.route('/cadastrar', methods=['POST'])
+def cadastrar_usuario_no_banco():
+    """Intermedeia a rota POST e armazena as chaves no banco SQLite."""
+    dados = request.get_json()
+    
+    # Validação padrão
+    if not dados or "nome" not in dados or "email" not in dados:
+        return jsonify({"erro": "Dados insuficientes para o cadastro."}), 400
+        
+    nome = dados["nome"].strip()
+    email = dados["email"].strip()
+    
+    if nome == "" or email == "":
+        return jsonify({"erro": "Os campos de texto não podem estar vazios."}), 400
+
+    try:
+        # Conexão interna com o banco de dados
+        conexao = sqlite3.connect(DB_NAME)
+        cursor = conexao.cursor()
+        
+        # Insere o novo usuário usando Prepared Statements contra SQL Injection
+        cursor.execute("INSERT INTO Usuarios (nome, email) VALUES (?, ?)", (nome, email))
+        conexao.commit()
+        conexao.close()
+        
+        return jsonify({
+            "mensagem": "Usuário persistido no banco de dados com sucesso!",
+            "cadastro": {"nome": nome, "email": email}
+        }), 201
+        
+    except sqlite3.IntegrityError:
+        # Trata o erro caso o e-mail (campo UNIQUE) já exista na tabela
+        return jsonify({"erro": "O e-mail fornecido já encontra-se registrado."}), 409
+    except Exception as e:
+        return jsonify({"erro": f"Erro interno do servidor: {str(e)}"}), 500
+
+if __name__ == "__main__":
+    inicializar_banco()  # Executa a checagem da tabela antes de erguer o servidor
+    app.run(debug=True)
