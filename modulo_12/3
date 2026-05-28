@@ -1,0 +1,25 @@
+# Modulo_11/atv3_consulta_filtro.py
+import sqlite3
+
+def buscar_clientes_com_a():
+    conexao = sqlite3.connect("empresa.db")
+    cursor = conexao.cursor()
+    
+    print("=== EXECUTANDO CONSULTA AVANÇADA ===")
+    print("Buscando clientes com nomes iniciando em 'A'...\n")
+    
+    # O operador 'A%' busca qualquer texto que comece com a letra A
+    cursor.execute("SELECT * FROM Clientes WHERE nome LIKE 'A%'")
+    resultados = cursor.fetchall()
+    
+    if not resultados:
+        print("Nenhum cliente com a inicial 'A' foi localizado.")
+    else:
+        for linha in resultados:
+            print(f"🔍 Registro Encontrado -> ID: {linha[0]} | Nome: {linha[1]} | E-mail: {linha[2]}")
+            
+    conexao.close()
+
+if __name__ == "__main__":
+    # Certifique-se de rodar a atividade 2 primeiro para popular o banco de dados!
+    buscar_clientes_com_a()

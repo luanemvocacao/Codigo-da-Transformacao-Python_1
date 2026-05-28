@@ -1,0 +1,24 @@
+# Modulo_11/atv1_criar_tabela.py
+import sqlite3
+
+def criar_tabela_clientes():
+    # Conecta ao arquivo de banco de dados (será criado se não existir)
+    conexao = sqlite3.connect("empresa.db")
+    cursor = conexao.cursor()
+    
+    # Criando a tabela Clientes com as colunas especificadas
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Clientes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE
+        )
+    """)
+    
+    # Salva as alterações e fecha a conexão
+    conexao.commit()
+    conexao.close()
+    print("✓ Banco de dados 'empresa.db' e tabela 'Clientes' criados com sucesso!")
+
+if __name__ == "__main__":
+    criar_tabela_clientes()

@@ -1,0 +1,87 @@
+# Modulo_11/sistema_tarefas.py
+import sqlite3
+
+def iniciar_sistema():
+    conexao = sqlite3.connect("tarefas.db")
+    cursor = conexao.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Tarefas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            descricao TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'Pendente'
+        )
+    """)
+    conexao.commit()
+    conexao.close()
+
+def adicionar_tarefa(descricao):
+    conexao = sqlite3.connect("tarefas.db")
+    cursor = conexao.cursor()
+    cursor.execute("INSERT INTO Tarefas (descricao) VALUES (?)", (descricao,))
+    conexao.commit()
+    conexao.close()
+    print(f"✓ Tarefa '{descricao}' adicionada!")
+
+def visualizar_tarefas():
+    conexao = sqlite3.connect("tarefas.db")
+    cursor = conexao.cursor()
+    cursor.execute("SELECT * FROM Tarefas")
+    linhas = cursor.fetchall()
+    conexao.close()
+    
+    print("\n========= SUAS TAREFAS =========")
+    if not color_list := linhas: # type: ignore
+        print("Nenhuma tarefa cadastrada.")
+    else:
+        for linha in linhas:
+            status_icon = "⏳" if linha[2] == "Pendente" else "✅"
+            print(f"[{linha[0]}] {status_icon} {linha[1]} ({linha[2]})")
+    print("================================")
+
+def excluir_tarefa(id_tarefa):
+    conexao = sqlite3.connect("tarefas.db")
+    cursor = conexao.cursor()
+    # Verifica se o ID inserido existe
+    cursor.execute("SELECT * FROM Tarefas WHERE id = ?", (id_tarefa,))
+    if not cursor.fetchone():
+        print("❌ Erro: ID de tarefa inválido ou inexistente.")
+    else:
+        cursor.execute("DELETE FROM Tarefas WHERE id = ?", (id_tarefa,))
+        conexao.commit()
+        print(f"✓ Tarefa de ID {id_tarefa} excluída com sucesso.")
+    conexao.close()
+
+def menu():
+    iniciar_sistema()
+    while True:
+        print("\n--- GERENCIADOR DE TAREFAS SQLITE ---")
+        print("1. Adicionar Tarefa")
+        print("2. Visualizar Tarefas")
+        print("3. Excluir Tarefa")
+        print("4. Sair")
+        
+        opcao = input("Escolha uma opção (1-4): ").strip()
+        
+        if opcao == "1":
+            desc = input("Digite a descrição da tarefa: ").strip()
+            if desc:
+                adicionar_tarefa(desc)
+            else:
+                print("❌ A descrição não pode ser vazia.")
+        elif opcao == "2":
+            visualizar_tarefas()
+        elif opcao == "3":
+            visualizar_tarefas()
+            try:
+                id_excluir = int(input("Digite o ID da tarefa que deseja apagar: "))
+                excluir_tarefa(id_excluir)
+            except ValueError:
+                print("❌ Erro: Digite um número de ID válido.")
+        elif opcao == "4":
+            print("Saindo do sistema de tarefas... Até mais!")
+            break
+        else:
+            print("❌ Opção inválida! Escolha um número de 1 a 4.")
+
+if __name__ == "__main__":
+    menu()
