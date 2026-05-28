@@ -1,0 +1,22 @@
+# Módulo_09/validacao_usuario.py
+
+def obter_idade_valida():
+    print("=== CADASTRO DE IDADE ===")
+    while True:
+        try:
+            idade = int(input("Por favor, digite a sua idade: "))
+            
+            # Validação lógica adicional
+            if idade < 0 or idade > 125:
+                # Dispara um ValueError intencional se sair do padrão humano real
+                raise ValueError("A idade não pode ser negativa ou irreal.")
+                
+            return idade
+            
+        except ValueError as erro:
+            print(f"❌ Entrada inválida! Detalhe: {erro if str(erro) else 'Digite um número inteiro.'}")
+            print("Tente novamente.\n")
+
+if __name__ == "__main__":
+    idade_final = obter_idade_valida()
+    print(f"\n✓ Sucesso: Idade cadastrada com segurança: {idade_final} anos.")

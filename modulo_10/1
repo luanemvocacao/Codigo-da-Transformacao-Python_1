@@ -1,0 +1,20 @@
+# Módulo_09/calculadora_segura.py
+
+def dividir():
+    print("=== CALCULADORA DE DIVISÃO SEGURA ===")
+    try:
+        numerador = float(input("Digite o numerador: "))
+        denominador = float(input("Digite o denominador: "))
+        
+        resultado = numerador / denominador
+        print(f"✓ Resultado da divisão: {resultado:.2f}")
+        
+    except ZeroDivisionError:
+        print("❌ Erro: Não é possível dividir um número por zero!")
+    except ValueError:
+        print("❌ Erro: Por favor, insira apenas valores numéricos válidos.")
+    except Exception as e:
+        print(f"❌ Ocorreu um erro inesperado: {e}")
+
+if __name__ == "__main__":
+    dividir()

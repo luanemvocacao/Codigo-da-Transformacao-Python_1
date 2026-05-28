@@ -1,0 +1,38 @@
+# Módulo_09/sistema_login_bloqueio.py
+
+# Banco de dados simulado
+CREDENCIAIS_VALIDAS = {
+    "aluno_vocacao": "python123",
+    "admin": "root2026"
+}
+
+class ContaBloqueadaError(Exception):
+    """Exceção disparada quando o limite de tentativas de login estoura."""
+    pass
+
+def realizar_login():
+    tentativas_restantes = 3
+    print("====== SISTEMA DE LOGIN SEGURO ======")
+    
+    while tentativas_restantes > 0:
+        try:
+            usuario = input("\nDigite o usuário: ").strip()
+            senha = input("Digite a senha: ").strip()
+            
+            # Validação das credenciais
+            if usuario in CREDENCIAIS_VALIDAS and CREDENCIAIS_VALIDAS[usuario] == str(senha):
+                print(f"\n🔓 [Acesso Permitido] Bem-vindo, {usuario}!")
+                return
+            else:
+                tentativas_restantes -= 1
+                if tentativas_restantes == 0:
+                    raise ContaBloqueadaError("Número máximo de tentativas excedido! Conta temporariamente bloqueada.")
+                
+                print(f"❌ Usuário ou senha incorretos! Você tem mais {tentativas_restantes} tentativa(s).")
+                
+        except ContaBloqueadaError as erro_bloqueio:
+            print(f"\n🚨 {erro_bloqueio}")
+            return
+
+if __name__ == "__main__":
+    realizar_login()
