@@ -1,0 +1,31 @@
+# Modulo_12/atv2_test_calculadora.py
+import unittest
+
+# Definição da classe Calculadora
+class Calculadora:
+    def somar(self, a, b):
+        return a + b
+
+    def dividir(self, a, b):
+        if b == 0:
+            raise ZeroDivisionError("Não é possível dividir por zero.")
+        return a / b
+
+
+# Suite de testes para validar os métodos da Calculadora
+class TestMetodosCalculadora(unittest.TestCase):
+    
+    def setUp(self):
+        """O método setUp roda antes de cada teste, preparando o objeto."""
+        self.calc = Calculadora()
+
+    def test_operacao_somar(self):
+        """Valida o funcionamento correto do método somar."""
+        self.assertEqual(self.calc.somar(10, 20), 30)
+
+    def test_operacao_dividir(self):
+        """Valida o funcionamento correto do método dividir com valores válidos."""
+        self.assertEqual(self.calc.dividir(15, 3), 5)
+
+if __name__ == "__main__":
+    unittest.main()

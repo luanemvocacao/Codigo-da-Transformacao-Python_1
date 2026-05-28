@@ -1,0 +1,16 @@
+# Modulo_12/app.py
+from flask import Flask, jsonify # type: ignore
+
+# Inicializa a aplicação Flask
+app = Flask(__name__)
+
+# Define a rota/endpoint da API conforme o desafio
+@app.route('/api/status', methods=['GET'])
+def obter_status():
+    return jsonify({
+        "status": "operacional",
+        "mensagem": "API Flask executando com sucesso!"
+    }), 200
+
+if __name__ == "__main__":
+    app.run(debug=True)

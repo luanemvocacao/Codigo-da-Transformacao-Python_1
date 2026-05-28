@@ -1,0 +1,27 @@
+# Modulo_12/test_api.py
+import pytest # type: ignore
+from app import app  # type: ignore # Importa a nossa aplicação Flask
+
+@pytest.fixture
+def cliente():
+    """Configura um cliente de testes virtual do Flask.
+    
+    Isso permite simular requisições HTTP de forma rápida e isolada.
+    """
+    with app.test_client() as client:
+        yield client
+
+def test_status_code_do_endpoint(cliente):
+    """Garante que o endpoint '/api/status' responde com o código HTTP 200."""
+    resposta = cliente.get('/api/status')
+    assert resposta.status_code == 200
+
+def test_conteudo_json_do_endpoint(cliente):
+    """Valida se as chaves e valores do dicionário JSON estão corretos."""
+    resposta = cliente.get('/api/status')
+    dados = resposta.get_json()  # Converte a resposta bruta em dicionário Python
+    
+    # Validações das propriedades retornadas
+    assert dados["status"] == "operacional"
+    assert "mensagem" in dados
+    assert dados["mensagem"] == "API Flask executando com sucesso!"

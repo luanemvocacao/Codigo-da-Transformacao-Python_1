@@ -1,0 +1,23 @@
+# Modulo_12/atv3_test_excecoes.py
+import unittest
+
+# Reaproveitando a estrutura da classe Calculadora para o teste de exceção
+class Calculadora:
+    def dividir(self, a, b):
+        if b == 0:
+            raise ZeroDivisionError("Divisão por zero não é permitida.")
+        return a / b
+
+
+class TestCalculadoraExcecoes(unittest.TestCase):
+    
+    def test_divisao_por_zero_deve_lancar_erro(self):
+        """Garante que o programa reage jogando uma exceção ao receber um denominador 0."""
+        calc = Calculadora()
+        
+        # O teste só passa se o bloco abaixo levantar um ZeroDivisionError
+        with self.assertRaises(ZeroDivisionError):
+            calc.dividir(10, 0)
+
+if __name__ == "__main__":
+    unittest.main()
