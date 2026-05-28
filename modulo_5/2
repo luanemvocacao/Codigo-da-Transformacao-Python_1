@@ -1,0 +1,16 @@
+# Criando o dicionário com os dados do aluno
+aluno = {
+    "Nome": "Gabriel Silva",
+    "Idade": 17,
+    "Notas": [8.5, 7.0, 9.2]
+}
+
+# Exibindo os valores no console
+print("=== DADOS DO ALUNO ===")
+print(f"Nome do Aluno: {aluno['Nome']}")
+print(f"Idade: {aluno['Idade']} anos")
+
+# Exibindo as notas e calculando a média de forma dinâmica
+print("Notas obtidas:", ", ".join(map(str, aluno["Notas"])))
+media = sum(aluno["Notas"]) / len(aluno["Notas"])
+print(f"Média Final: {media:.2f}")
