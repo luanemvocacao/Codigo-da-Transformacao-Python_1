@@ -1,0 +1,13 @@
+from faker import Faker # pyright: ignore[reportMissingImports]
+
+# Inicializa o gerador em português do Brasil
+fake = Faker('pt_BR')
+
+print("=== GERADOR DE CADASTROS FICTÍCIOS ===")
+
+for i in range(1, 4):
+    print(f"\n--- Usuário {i} ---")
+    print(f"Nome: {fake.name()}")
+    print(f"CPF: {fake.cpf()}")
+    print(f"Cidade: {fake.city()}")
+    print(f"E-mail: {fake.email()}")

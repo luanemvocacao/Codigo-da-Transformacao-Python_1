@@ -1,0 +1,29 @@
+import random
+import math
+
+numero_secreto = random.randint(1, 100)
+tentativas = 0
+
+print("==================================================")
+print("  BEM-VINDO AO JOGO DE ADIVINHAÇÃO (1 A 100)      ")
+print("==================================================")
+
+while True:
+    try:
+        palpite = int(input("\nDigite o seu palpite: "))
+        tentativas += 1
+        
+        if palpite == numero_secreto:
+            print(f"🎉 PARABÉNS! Você acertou em {tentativas} tentativas!")
+            break
+        elif palpite < numero_secreto:
+            print("O número secreto é MAIOR.")
+        else:
+            print("O número secreto é MENOR.")
+            
+        distancia = int(math.fabs(palpite - numero_secreto))
+        if distancia <= 5:
+            print("🔥 Dica: Você está MUITO perto (diferença de 5 números ou menos)!")
+            
+    except ValueError:
+        print("[Erro] Por favor, digite um número inteiro válido.")
