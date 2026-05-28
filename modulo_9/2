@@ -1,0 +1,41 @@
+# biblioteca.py
+
+class Livro:
+    def __init__(self, titulo, autor):
+        self.titulo = titulo
+        self.autor = autor
+        self.disponivel = True  # Estado inicializado como verdadeiro
+
+    def __str__(self):
+        status = "Disponível" if self.disponivel else "Emprestado"
+        return f"'{self.titulo}' por {self.autor} [{status}]"
+
+
+class Biblioteca:
+    def __init__(self, nome):
+        self.nome = nome
+        self.catalogo = []
+
+    def adicionar_livro(self, livro):
+        self.catalogo.append(livro)
+        print(f"✓ Livro '{livro.titulo}' cadastrado com sucesso.")
+
+    def listar_livros(self):
+        print(f"\n--- Livros na Biblioteca {self.nome} ---")
+        if not self.catalogo:
+            print("Nenhum livro no acervo.")
+        else:
+            for livro in self.catalogo:
+                print(f" • {livro}")
+
+    def emprestar_livro(self, titulo):
+        for livro in self.catalogo:
+            if livro.titulo.lower() == titulo.lower():
+                if livro.disponivel:
+                    livro.disponivel = False
+                    print(f"📢 Sucesso: O livro '{livro.titulo}' foi emprestado.")
+                    return
+                else:
+                    print(f"❌ Erro: '{livro.titulo}' já está emprestado.")
+                    return
+        print(f"❌ Erro: O livro '{titulo}' não foi encontrado.")

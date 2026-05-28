@@ -1,0 +1,40 @@
+# main.py
+
+# Importando as classes dos arquivos que criamos
+from veiculos import Carro, CarroEletrico # type: ignore
+from biblioteca import Livro, Biblioteca # type: ignore
+
+print("=========================================")
+print("     TESTANDO PARTE 1: VEÍCULOS (POO)    ")
+print("=========================================\n")
+
+# Testando as Atividades 1 e 3
+carro_comum = Carro("Chevrolet", "Onix")
+carro_comum.exibir_info()
+print(f"Usando __str__: {carro_comum}\n")
+
+# Testando a Atividade 2 (Herança)
+carro_bateria = CarroEletrico("Tesla", "Model 3", 491)
+carro_bateria.exibir_info()
+print(f"Usando __str__: {carro_bateria}\n")
+
+
+print("=========================================")
+print("     TESTANDO PARTE 2: BIBLIOTECA        ")
+print("=========================================\n")
+
+# Inicializando o sistema de biblioteca (Desafio Extra)
+biblioteca_central = Biblioteca("Saber")
+
+# Criando livros
+livro1 = Livro("O Alquimista", "Paulo Coelho")
+livro2 = Livro("Dom Quixote", "Miguel de Cervantes")
+
+# Adicionando ao sistema
+biblioteca_central.adicionar_livro(livro1)
+biblioteca_central.adicionar_livro(livro2)
+
+# Listando e testando empréstimo
+biblioteca_central.listar_livros()
+biblioteca_central.emprestar_livro("O Alquimista")
+biblioteca_central.listar_livros()

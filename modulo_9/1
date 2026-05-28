@@ -1,0 +1,30 @@
+# veiculos.py
+
+class Carro:
+    # Atividade 3: Método especial __init__ para inicializar atributos
+    def __init__(self, marca, modelo):
+        self.marca = marca
+        self.modelo = modelo
+
+    # Atividade 1: Método para exibir os dados
+    def exibir_info(self):
+        print(f"Carro: {self.marca} {self.modelo}")
+
+    # Atividade 3: Método especial __str__ para representação em texto
+    def __str__(self):
+        return f"Veículo: {self.marca} {self.modelo}"
+
+
+# Atividade 2: Classe CarroEletrico que herda de Carro
+class CarroEletrico(Carro):
+    def __init__(self, marca, modelo, autonomia_bateria):
+        # Transmite os parâmetros para a classe mãe (Carro)
+        super().__init__(marca, modelo)
+        self.autonomia_bateria = autonomia_bateria  # Atributo exclusivo
+
+    # Sobrescrita de método para incluir a autonomia da bateria
+    def exibir_info(self):
+        print(f"Carro Elétrico: {self.marca} {self.modelo} | Bateria: {self.autonomia_bateria} km de autonomia")
+
+    def __str__(self):
+        return f"Veículo Elétrico: {self.marca} {self.modelo} (Autonomia: {self.autonomia_bateria} km)"
