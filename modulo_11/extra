@@ -1,57 +1,87 @@
-# Modulo_10/busca_filmes.py
-import requests # type: ignore
+# Modulo_11/sistema_tarefas.py
+import sqlite3
 
-def buscar_filme(nome_filme):
-    # Caso não possua chave, use esta URL alternativa mockada/demonstrativa para testes, 
-    # ou insira sua chave válida do TMDB abaixo.
-    API_KEY = "SUA_TMDB_API_KEY_AQUI"
-    url = f"https://api.themoviedb.org/3/search/movie"
-    
-    parametros = {
-        "api_key": API_KEY,
-        "query": nome_filme,
-        "language": "pt-BR"
-    }
-    
-    print(f"\nBuscando informações sobre o filme: '{nome_filme}'...")
-    
-    try:
-        resposta = requests.get(url, params=parametros, timeout=10)
-        resposta.raise_for_status()
-        
-        dados = resposta.json()
-        resultados = dados.get("results", [])
-        
-        if not resultados:
-            print("❌ Nenhum filme encontrado com esse nome.")
-            return
-            
-        # Pega o primeiro resultado mais relevante retornado pela busca
-        primeiro_filme = resultados[0]
-        
-        titulo = primeiro_filme.get("title", "Sem título")
-        titulo_original = primeiro_filme.get("original_title", "Sem título original")
-        data_lancamento = primeiro_filme.get("release_date", "Desconhecida")
-        sinopse = primeiro_filme.get("overview", "Sinopse não disponível em português.")
-        nota_avaliacao = primeiro_filme.get("vote_average", 0.0)
+def iniciar_sistema():
+    conexao = sqlite3.connect("tarefas.db")
+    cursor = conexao.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Tarefas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            descricao TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'Pendente'
+        )
+    """)
+    conexao.commit()
+    conexao.close()
 
-        # Exibição dos dados obtidos da API
-        print("=" * 50)
-        print(f"🎬 Filme: {titulo}")
-        print(f"   Título Original: {titulo_original}")
-        print(f"   Lançamento: {data_lancamento} | Avaliação: ⭐ {nota_avaliacao:.1f}/10")
-        print("=" * 50)
-        print(f"📝 Sinopse:\n{sinopse if sinopse else 'Sem descrição disponível.'}")
-        print("=" * 50)
+def adicionar_tarefa(descricao):
+    conexao = sqlite3.connect("tarefas.db")
+    cursor = conexao.cursor()
+    cursor.execute("INSERT INTO Tarefas (descricao) VALUES (?)", (descricao,))
+    conexao.commit()
+    conexao.close()
+    print(f"✓ Tarefa '{descricao}' adicionada!")
 
-    except requests.exceptions.HTTPError:
-        print("❌ Erro na requisição. Verifique sua chave de acesso da API do TMDB.")
-    except requests.exceptions.ConnectionError:
-        print("❌ Erro de rede: Não foi possível conectar ao servidor do TMDB.")
-    except Exception as e:
-        print(f"❌ Ocorreu um erro: {e}")
+def visualizar_tarefas():
+    conexao = sqlite3.connect("tarefas.db")
+    cursor = conexao.cursor()
+    cursor.execute("SELECT * FROM Tarefas")
+    linhas = cursor.fetchall()
+    conexao.close()
+    
+    print("\n========= SUAS TAREFAS =========")
+    if not color_list := linhas: # type: ignore
+        print("Nenhuma tarefa cadastrada.")
+    else:
+        for linha in linhas:
+            status_icon = "⏳" if linha[2] == "Pendente" else "✅"
+            print(f"[{linha[0]}] {status_icon} {linha[1]} ({linha[2]})")
+    print("================================")
+
+def excluir_tarefa(id_tarefa):
+    conexao = sqlite3.connect("tarefas.db")
+    cursor = conexao.cursor()
+    # Verifica se o ID inserido existe
+    cursor.execute("SELECT * FROM Tarefas WHERE id = ?", (id_tarefa,))
+    if not cursor.fetchone():
+        print("❌ Erro: ID de tarefa inválido ou inexistente.")
+    else:
+        cursor.execute("DELETE FROM Tarefas WHERE id = ?", (id_tarefa,))
+        conexao.commit()
+        print(f"✓ Tarefa de ID {id_tarefa} excluída com sucesso.")
+    conexao.close()
+
+def menu():
+    iniciar_sistema()
+    while True:
+        print("\n--- GERENCIADOR DE TAREFAS SQLITE ---")
+        print("1. Adicionar Tarefa")
+        print("2. Visualizar Tarefas")
+        print("3. Excluir Tarefa")
+        print("4. Sair")
+        
+        opcao = input("Escolha uma opção (1-4): ").strip()
+        
+        if opcao == "1":
+            desc = input("Digite a descrição da tarefa: ").strip()
+            if desc:
+                adicionar_tarefa(desc)
+            else:
+                print("❌ A descrição não pode ser vazia.")
+        elif opcao == "2":
+            visualizar_tarefas()
+        elif opcao == "3":
+            visualizar_tarefas()
+            try:
+                id_excluir = int(input("Digite o ID da tarefa que deseja apagar: "))
+                excluir_tarefa(id_excluir)
+            except ValueError:
+                print("❌ Erro: Digite um número de ID válido.")
+        elif opcao == "4":
+            print("Saindo do sistema de tarefas... Até mais!")
+            break
+        else:
+            print("❌ Opção inválida! Escolha um número de 1 a 4.")
 
 if __name__ == "__main__":
-    filme_usuario = input("Digite o nome de um filme para pesquisar: ").strip()
-    if filme_usuario:
-        buscar_filme(filme_usuario)
+    menu()

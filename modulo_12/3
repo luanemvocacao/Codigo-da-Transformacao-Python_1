@@ -1,25 +1,23 @@
-# Modulo_11/atv3_consulta_filtro.py
-import sqlite3
+# Modulo_12/atv3_test_excecoes.py
+import unittest
 
-def buscar_clientes_com_a():
-    conexao = sqlite3.connect("empresa.db")
-    cursor = conexao.cursor()
+# Reaproveitando a estrutura da classe Calculadora para o teste de exceção
+class Calculadora:
+    def dividir(self, a, b):
+        if b == 0:
+            raise ZeroDivisionError("Divisão por zero não é permitida.")
+        return a / b
+
+
+class TestCalculadoraExcecoes(unittest.TestCase):
     
-    print("=== EXECUTANDO CONSULTA AVANÇADA ===")
-    print("Buscando clientes com nomes iniciando em 'A'...\n")
-    
-    # O operador 'A%' busca qualquer texto que comece com a letra A
-    cursor.execute("SELECT * FROM Clientes WHERE nome LIKE 'A%'")
-    resultados = cursor.fetchall()
-    
-    if not resultados:
-        print("Nenhum cliente com a inicial 'A' foi localizado.")
-    else:
-        for linha in resultados:
-            print(f"🔍 Registro Encontrado -> ID: {linha[0]} | Nome: {linha[1]} | E-mail: {linha[2]}")
-            
-    conexao.close()
+    def test_divisao_por_zero_deve_lancar_erro(self):
+        """Garante que o programa reage jogando uma exceção ao receber um denominador 0."""
+        calc = Calculadora()
+        
+        # O teste só passa se o bloco abaixo levantar um ZeroDivisionError
+        with self.assertRaises(ZeroDivisionError):
+            calc.dividir(10, 0)
 
 if __name__ == "__main__":
-    # Certifique-se de rodar a atividade 2 primeiro para popular o banco de dados!
-    buscar_clientes_com_a()
+    unittest.main()

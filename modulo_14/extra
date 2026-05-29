@@ -1,121 +1,24 @@
-# Modulo_13/blog_api.py
-import sqlite3
-from flask import Flask, jsonify, request # type: ignore
+# Modulo_14/produtos/views.py (Substitua a função listar_produtos por esta)
+from django.shortcuts import render # type: ignore
+from django.core.paginator import Paginator # type: ignore
+from .models import Produto # type: ignore
 
-app = Flask(__name__)
-DB_BLOG = "blog.db"
-
-def init_blog_db():
-    """Cria tabelas de usuários, posts e comentários."""
-    conexao = sqlite3.connect(DB_BLOG)
-    cursor = conexao.cursor()
+def listar_produtos(request):
+    query_busca = request.GET.get('busca', '')
     
-    # Tabela de Autenticação
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS Autenticacao (
-            username TEXT PRIMARY KEY,
-            token TEXT NOT NULL
-        )
-    """)
-    # Tabela de Posts
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS Posts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titulo TEXT NOT NULL,
-            conteudo TEXT NOT NULL,
-            autor TEXT NOT NULL
-        )
-    """)
-    # Tabela de Comentários
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS Comentarios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            post_id INTEGER NOT NULL,
-            texto TEXT NOT NULL,
-            leitor TEXT NOT NULL,
-            FOREIGN KEY(post_id) REFERENCES Posts(id)
-        )
-    """)
-    # Inserindo um usuário e token padrão de teste
-    try:
-        cursor.execute("INSERT INTO Autenticacao (username, token) VALUES (?, ?)", ("admin", "token-secreto-123"))
-        conexao.commit()
-    except sqlite3.IntegrityError:
-        pass
-        
-    conexao.close()
+    # Aplicação do filtro por nome (icontains ignora maiúsculas/minúsculas)
+    if query_busca:
+        lista_produtos = Produto.objects.filter(nome__icontains=query_busca).order_by('nome')
+    else:
+        lista_produtos = Produto.objects.all().order_by('nome')
 
-# --- AUXILIAR DE VERIFICAÇÃO DE LOGIN ---
-def verificar_autenticacao(req):
-    """Verifica se o token enviado nos headers é válido."""
-    token_enviado = req.headers.get("Authorization")
-    if not token_enviado:
-        return False
-    
-    conexao = sqlite3.connect(DB_BLOG)
-    cursor = conexao.cursor()
-    cursor.execute("SELECT username FROM Autenticacao WHERE token = ?", (token_enviado,))
-    usuario = cursor.fetchone()
-    conexao.close()
-    return usuario[0] if usuario else False
+    # Paginação: Limita a exibição a 5 itens por página
+    paginador = Paginator(lista_produtos, 5)
+    pagina_atual = request.GET.get('page')
+    produtos_paginados = paginador.get_page(pagina_atual)
 
-# --- ROTAS DA API ---
-
-@app.route('/blog/posts', methods=['POST'])
-def criar_post():
-    """Criação de posts (Requer autenticação via Header Authorization)."""
-    autor = verificar_autenticacao(request)
-    if not autor:
-        return jsonify({"erro": "Acesso não autorizado. Envie um token válido."}), 401
-        
-    dados = request.get_json()
-    if not dados or "titulo" not in dados or "conteudo" not in dados:
-        return jsonify({"erro": "Campos 'titulo' and 'conteudo' obrigatórios."}), 400
-        
-    conexao = sqlite3.connect(DB_BLOG)
-    cursor = conexao.cursor()
-    cursor.execute("INSERT INTO Posts (titulo, conteudo, autor) VALUES (?, ?, ?)", 
-                   (dados["titulo"], dados["conteudo"], autor))
-    conexao.commit()
-    conexao.close()
-    
-    return jsonify({"mensagem": "Post criado no blog com sucesso!"}), 201
-
-@app.route('/blog/posts', methods=['GET'])
-def listar_posts():
-    """Retorna todos os posts cadastrados."""
-    conexao = sqlite3.connect(DB_BLOG)
-    cursor = conexao.cursor()
-    cursor.execute("SELECT * FROM Posts")
-    linhas = cursor.fetchall()
-    conexao.close()
-    
-    lista = [{"id": l[0], "titulo": l[1], "conteudo": l[2], "autor": l[3]} for l in linhas]
-    return jsonify(lista), 200
-
-@app.route('/blog/posts/<int:post_id>/comentarios', methods=['POST'])
-def adicionar_comentario(post_id):
-    """Adiciona um comentário a um post específico."""
-    dados = request.get_json()
-    if not dados or "texto" not in dados or "leitor" not in dados:
-        return jsonify({"erro": "Campos 'texto' e 'leitor' obrigatórios."}), 400
-        
-    conexao = sqlite3.connect(DB_BLOG)
-    cursor = conexao.cursor()
-    
-    # Garante que o post alvo exista
-    cursor.execute("SELECT id FROM Posts WHERE id = ?", (post_id,))
-    if not cursor.fetchone():
-        conexao.close()
-        return jsonify({"erro": "O post especificado não existe."}), 404
-        
-    cursor.execute("INSERT INTO Comentarios (post_id, texto, leitor) VALUES (?, ?, ?)",
-                   (post_id, dados["texto"], dados["leitor"]))
-    conexao.commit()
-    conexao.close()
-    
-    return jsonify({"mensagem": "Comentário publicado!"}), 201
-
-if __name__ == "__main__":
-    init_blog_db()
-    app.run(port=5001, debug=True)
+    contexto = {
+        'produtos': produtos_paginados,
+        'busca': query_busca
+    }
+    return render(request, 'produtos/listar_com_desafio.html', contexto)

@@ -1,7 +1,43 @@
-def saudacao(nome):
-    """Exibe uma mensagem de saudação personalizada."""
-    print(f"Olá, {nome}! Seja muito bem-vindo(a) ao curso!")
+lista_compras = []
 
-# --- Testando a função ---
-nome_usuario = input("Digite o seu nome: ")
-saudacao(nome_usuario)
+while True:
+    print("\n=== LISTA DE COMPRAS ===")
+    # Se a lista não estiver vazia, exibe os itens. Caso contrário, avisa que está vazia.
+    if lista_compras:
+        print("Itens atuais:")
+        for indice, item in enumerate(lista_compras, start=1):
+            print(f"  {indice}. {item}")
+    else:
+        print("A lista está vazia.")
+    print("------------------------")
+    print("1. Adicionar item")
+    print("2. Remover item")
+    print("3. Sair")
+    
+    opcao = input("Escolha uma opção: ").strip()
+    
+    if opcao == "1":
+        item = input("Digite o nome do item para adicionar: ").strip()
+        if item:  # Verifica se o usuário não digitou apenas espaços
+            lista_compras.append(item)
+            print(f"✓ '{item}' foi adicionado com sucesso!")
+        else:
+            print("[Erro] O nome do item não pode estar vazio.")
+            
+    elif opcao == "2":
+        if not lista_compras:
+            print("[Erro] A lista já está vazia. Não há nada para remover.")
+        else:
+            item = input("Digite o nome exato do item para remover: ").strip()
+            if item in lista_compras:
+                lista_compras.remove(item)
+                print(f"✕ '{item}' foi removido com sucesso!")
+            else:
+                print(f"[Erro] O item '{item}' não foi encontrado na lista.")
+                
+    elif opcao == "3":
+        print("Programa encerrado. Boas compras!")
+        break
+        
+    else:
+        print("[Erro] Opção inválida! Por favor, escolha 1, 2 ou 3.")

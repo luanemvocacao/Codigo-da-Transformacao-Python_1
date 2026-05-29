@@ -1,27 +1,34 @@
-# Banco de dados simulado contendo usuários e suas respectivas senhas
-usuarios_cadastrados = {
-    "admin": "1234",
-    "gabriel": "python99",
-    "maria_silva": "senhaSegura!2"
-}
+import os
+import shutil
 
-def validar_login(usuario, senha):
-    """Valida se as credenciais existem e coincidem com o banco de dados."""
-    # Verifica se o usuário existe nas chaves do dicionário
-    if usuario in usuarios_cadastrados:
-        # Se existir, valida se a senha informada bate com a cadastrada
-        if usuarios_cadastrados[usuario] == senha:
-            return True
-            
-    return False
+# Definição dos nomes das pastas
+diretorio_origem = "pasta_importante"
+diretorio_backup = "pasta_backup"
 
-# --- Fluxo de Execução do Sistema ---
-print("====== SISTEMA DE ACESSO ======")
-user_input = input("Usuário: ").strip()
-password_input = input("Senha: ").strip()
+# Criação das pastas de teste caso elas não existam
+os.makedirs(diretorio_origem, exist_ok=True)
+os.makedirs(diretorio_backup, exist_ok=True)
 
-# Chamada da função passando os dados digitados
-if validar_login(user_input, password_input):
-    print(f"\n[Acesso Permitido] Bem-vindo de volta, {user_input}!")
+# Criando 3 arquivos fictícios dentro da pasta importante para simular dados reais
+for i in range(1, 4):
+    with open(f"{diretorio_origem}/documento_{i}.txt", "w") as f:
+        f.write(f"Conteúdo confidencial do documento {i}")
+
+print("=== INICIANDO SISTEMA DE BACKUP AUTOMÁTICO ===")
+
+# Listando os arquivos da pasta de origem
+arquivos = os.listdir(diretorio_origem)
+
+if not arquivos:
+    print("A pasta de origem está vazia. Nada para copiar.")
 else:
-    print("\n[Erro de Autenticação] Usuário ou senha incorretos.")
+    for arquivo in arquivos:
+        # Monta o caminho completo de origem e de destino
+        caminho_origem = os.path.join(diretorio_origem, arquivo)
+        caminho_destino = os.path.join(diretorio_backup, arquivo)
+        
+        # Realiza a cópia do arquivo usando a biblioteca shutil
+        shutil.copy(caminho_origem, caminho_destino)
+        print(f"✓ Cópia feita: {arquivo} -> enviado para {diretorio_backup}/")
+
+print("\n[Sucesso] Todos os arquivos importantes foram salvos na pasta de backup!")

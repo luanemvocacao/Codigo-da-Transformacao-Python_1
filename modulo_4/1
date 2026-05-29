@@ -1,24 +1,33 @@
-# Solicitando os números ao usuário
-num1 = float(input("Digite o primeiro número: "))
-num2 = float(input("Digite o segundo número: "))
 
-# Realizando os cálculos
-soma = num1 + num2
-subtracao = num1 - num2
-multiplicacao = num1 * num2
+lista_compras = []
 
-# Tratamento para evitar divisão por zero
-if num2 != 0:
-    divisao = num1 / num2
-    resto = num1 % num2
-else:
-    divisao = "Não é possível dividir por zero"
-    resto = "Não é possível calcular o resto de divisão por zero"
-
-# Exibindo os resultados
-print("\n--- Resultados ---")
-print(f"Soma: {num1} + {num2} = {soma}")
-print(f"Subtração: {num1} - {num2} = {subtracao}")
-print(f"Multiplicação: {num1} * {num2} = {multiplicacao}")
-print(f"Divisão: {divisao}")
-print(f"Resto da divisão (%): {resto}")
+while True:
+    print("\n=== LISTA DE COMPRAS ===")
+    print(f"Itens atuais: {lista_compras if lista_compras else 'A lista está vazia.'}")
+    print("------------------------")
+    print("1. Adicionar item")
+    print("2. Remover item")
+    print("3. Sair")
+    
+    opcao = input("Escolha uma opção: ")
+    
+    if opcao == "1":
+        item = input("Digite o nome do item para adicionar: ").strip()
+        if item:
+            lista_compras.append(item)
+            print(f"'{item}' foi adicionado com sucesso!")
+    elif opcao == "2":
+        if not lista_compras:
+            print("A lista já está vazia. Não há nada para remover.")
+        else:
+            item = input("Digite o nome do item para remover: ").strip()
+            if item in lista_compras:
+                lista_compras.remove(item)
+                print(f"'{item}' foi removido com sucesso!")
+            else:
+                print(f"O item '{item}' não foi encontrado na lista.")
+    elif opcao == "3":
+        print("Programa encerrado. Boas compras!")
+        break
+    else:
+        print("Opção inválida! Tente novamente.")

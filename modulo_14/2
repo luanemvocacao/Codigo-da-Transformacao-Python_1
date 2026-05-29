@@ -1,32 +1,10 @@
-# Modulo_13/atv2_rota_post.py
-from flask import Flask, jsonify, request # type: ignore
+# Modulo_14/produtos/urls.py
+from django.urls import path # type: ignore
+from . import views # type: ignore
 
-app = Flask(__name__)
-
-@app.route('/cadastrar', methods=['POST'])
-def cadastrar_usuario_memoria():
-    """Recebe os dados do usuário via payload JSON e valida a requisição."""
-    # Captura os dados no formato JSON
-    dados = request.get_json()
-    
-    # Validação estrutural dos campos obrigatórios
-    if not dados or "nome" not in dados or "email" not in dados:
-        return jsonify({
-            "erro": "Bad Request",
-            "mensagem": "Dados inválidos. Certifique-se de preencher 'nome' e 'email'."
-        }), 400
-        
-    nome = dados["nome"]
-    email = dados["email"]
-    
-    # Retorna uma simulação de sucesso confirmando os dados recebidos
-    return jsonify({
-        "mensagem": "Dados recebidos com sucesso via JSON (Validação OK)!",
-        "usuario_recebido": {
-            "nome": nome,
-            "email": email
-        }
-    }), 200
-
-if __name__ == "__main__":
-    app.run(debug=True)
+urlpatterns = [
+    path('', views.listar_produtos, name='listar_produtos'),
+    path('novo/', views.cadastrar_produto, name='cadastrar_produto'),
+    path('editar/<int:pk>/', views.atualizar_produto, name='atualizar_produto'),
+    path('excluir/<int:pk>/', views.excluir_produto, name='excluir_produto'),
+]

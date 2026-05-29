@@ -1,58 +1,38 @@
-# biblioteca_classes.py
+# Módulo_09/sistema_login_bloqueio.py
 
-class Livro:
-    def __init__(self, titulo, autor):
-        self.titulo = titulo
-        self.autor = autor
-        self.disponivel = True  # Por padrão, todo livro novo entra como disponível
+# Banco de dados simulado
+CREDENCIAIS_VALIDAS = {
+    "aluno_vocacao": "python123",
+    "admin": "root2026"
+}
 
-    def __str__(self):
-        status = "Disponível" if self.disponivel else "Emprestado"
-        return f"'{self.titulo}' - {self.autor} [{status}]"
+class ContaBloqueadaError(Exception):
+    """Exceção disparada quando o limite de tentativas de login estoura."""
+    pass
 
+def realizar_login():
+    tentativas_restantes = 3
+    print("====== SISTEMA DE LOGIN SEGURO ======")
+    
+    while tentativas_restantes > 0:
+        try:
+            usuario = input("\nDigite o usuário: ").strip()
+            senha = input("Digite a senha: ").strip()
+            
+            # Validação das credenciais
+            if usuario in CREDENCIAIS_VALIDAS and CREDENCIAIS_VALIDAS[usuario] == str(senha):
+                print(f"\n🔓 [Acesso Permitido] Bem-vindo, {usuario}!")
+                return
+            else:
+                tentativas_restantes -= 1
+                if tentativas_restantes == 0:
+                    raise ContaBloqueadaError("Número máximo de tentativas excedido! Conta temporariamente bloqueada.")
+                
+                print(f"❌ Usuário ou senha incorretos! Você tem mais {tentativas_restantes} tentativa(s).")
+                
+        except ContaBloqueadaError as erro_bloqueio:
+            print(f"\n🚨 {erro_bloqueio}")
+            return
 
-class Biblioteca:
-    def __init__(self, nome):
-        self.nome = nome
-        self.catalogo = []
-
-    def adicionar_livro(self, livro):
-        """Adiciona um objeto da classe Livro ao catálogo."""
-        self.catalogo.append(livro)
-        print(f"✓ Livro '{livro.titulo}' cadastrado com sucesso na biblioteca {self.nome}.")
-
-    def listar_livros(self):
-        """Exibe o estado de todos os livros cadastrados."""
-        print(f"\n--- Catálogo Atual: Biblioteca {self.nome} ---")
-        if not self.catalogo:
-            print("Nenhum livro cadastrado no momento.")
-        else:
-            for livro in self.catalogo:
-                print(f" • {livro}")
-        print("-" * 40)
-
-    def emprestar_livro(self, titulo_livro):
-        """Busca o livro pelo título e realiza o empréstimo, se disponível."""
-        for livro in self.catalogo:
-            if livro.titulo.lower() == titulo_livro.lower():
-                if livro.disponivel:
-                    livro.disponivel = False
-                    print(f"📢 Empréstimo Confirmado: '{livro.titulo}' foi retirado.")
-                    return
-                else:
-                    print(f"❌ Operação Negada: '{livro.titulo}' já está emprestado.")
-                    return
-        print(f"❌ Erro: O livro '{titulo_livro}' não existe no acervo.")
-
-    def devolver_livro(self, titulo_livro):
-        """Busca o livro e altera seu estado para disponível novamente."""
-        for livro in self.catalogo:
-            if livro.titulo.lower() == titulo_livro.lower():
-                if not livro.disponivel:
-                    livro.disponivel = True
-                    print(f"✓ Devolução Confirmada: '{livro.titulo}' está de volta ao acervo.")
-                    return
-                else:
-                    print(f"🤔 Atenção: '{livro.titulo}' já constava como disponível.")
-                    return
-        print(f"❌ Erro: O livro '{titulo_livro}' não pertence a esta biblioteca.")
+if __name__ == "__main__":
+    realizar_login()

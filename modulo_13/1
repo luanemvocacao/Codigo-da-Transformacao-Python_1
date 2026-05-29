@@ -1,24 +1,17 @@
-# Modulo_12/atv1_test_soma.py
-import unittest
+# Modulo_13/atv1_rota_get.py
+from flask import Flask, jsonify # type: ignore
 
-# Função que realiza a operação de soma
-def somar(a, b):
-    return a + b
+# Inicializa a aplicação Flask
+app = Flask(__name__)
 
-# Classe de teste que herda de unittest.TestCase
-class TestSomaSimples(unittest.TestCase):
-    
-    def test_soma_positivos(self):
-        """Testa a soma de dois números positivos."""
-        self.assertEqual(somar(5, 3), 8)
-
-    def test_soma_negativos(self):
-        """Testa a soma de dois números negativos."""
-        self.assertEqual(somar(-2, -3), -5)
-
-    def test_soma_com_zero(self):
-        """Testa a soma onde um dos valores é zero."""
-        self.assertEqual(somar(0, 10), 10)
+@app.route('/saudacao', methods=['GET'])
+def obter_saudacao():
+    """Implementa uma rota que retorna uma mensagem de saudação."""
+    return jsonify({
+        "status": "sucesso",
+        "mensagem": "Olá! Seja bem-vindo à nossa API construída com Flask."
+    }), 200
 
 if __name__ == "__main__":
-    unittest.main()
+    # Executa o servidor em modo de desenvolvimento (debug)
+    app.run(debug=True)

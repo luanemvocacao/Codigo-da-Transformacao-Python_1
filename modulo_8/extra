@@ -1,29 +1,58 @@
-import random
-import math
+# biblioteca_classes.py
 
-numero_secreto = random.randint(1, 100)
-tentativas = 0
+class Livro:
+    def __init__(self, titulo, autor):
+        self.titulo = titulo
+        self.autor = autor
+        self.disponivel = True  # Por padrão, todo livro novo entra como disponível
 
-print("==================================================")
-print("  BEM-VINDO AO JOGO DE ADIVINHAÇÃO (1 A 100)      ")
-print("==================================================")
+    def __str__(self):
+        status = "Disponível" if self.disponivel else "Emprestado"
+        return f"'{self.titulo}' - {self.autor} [{status}]"
 
-while True:
-    try:
-        palpite = int(input("\nDigite o seu palpite: "))
-        tentativas += 1
-        
-        if palpite == numero_secreto:
-            print(f"🎉 PARABÉNS! Você acertou em {tentativas} tentativas!")
-            break
-        elif palpite < numero_secreto:
-            print("O número secreto é MAIOR.")
+
+class Biblioteca:
+    def __init__(self, nome):
+        self.nome = nome
+        self.catalogo = []
+
+    def adicionar_livro(self, livro):
+        """Adiciona um objeto da classe Livro ao catálogo."""
+        self.catalogo.append(livro)
+        print(f"✓ Livro '{livro.titulo}' cadastrado com sucesso na biblioteca {self.nome}.")
+
+    def listar_livros(self):
+        """Exibe o estado de todos os livros cadastrados."""
+        print(f"\n--- Catálogo Atual: Biblioteca {self.nome} ---")
+        if not self.catalogo:
+            print("Nenhum livro cadastrado no momento.")
         else:
-            print("O número secreto é MENOR.")
-            
-        distancia = int(math.fabs(palpite - numero_secreto))
-        if distancia <= 5:
-            print("🔥 Dica: Você está MUITO perto (diferença de 5 números ou menos)!")
-            
-    except ValueError:
-        print("[Erro] Por favor, digite um número inteiro válido.")
+            for livro in self.catalogo:
+                print(f" • {livro}")
+        print("-" * 40)
+
+    def emprestar_livro(self, titulo_livro):
+        """Busca o livro pelo título e realiza o empréstimo, se disponível."""
+        for livro in self.catalogo:
+            if livro.titulo.lower() == titulo_livro.lower():
+                if livro.disponivel:
+                    livro.disponivel = False
+                    print(f"📢 Empréstimo Confirmado: '{livro.titulo}' foi retirado.")
+                    return
+                else:
+                    print(f"❌ Operação Negada: '{livro.titulo}' já está emprestado.")
+                    return
+        print(f"❌ Erro: O livro '{titulo_livro}' não existe no acervo.")
+
+    def devolver_livro(self, titulo_livro):
+        """Busca o livro e altera seu estado para disponível novamente."""
+        for livro in self.catalogo:
+            if livro.titulo.lower() == titulo_livro.lower():
+                if not livro.disponivel:
+                    livro.disponivel = True
+                    print(f"✓ Devolução Confirmada: '{livro.titulo}' está de volta ao acervo.")
+                    return
+                else:
+                    print(f"🤔 Atenção: '{livro.titulo}' já constava como disponível.")
+                    return
+        print(f"❌ Erro: O livro '{titulo_livro}' não pertence a esta biblioteca.")

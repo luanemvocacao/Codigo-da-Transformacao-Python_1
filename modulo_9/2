@@ -1,41 +1,41 @@
-# biblioteca.py
+# Módulo_09/simulador_bancario.py
 
-class Livro:
-    def __init__(self, titulo, autor):
-        self.titulo = titulo
-        self.autor = autor
-        self.disponivel = True  # Estado inicializado como verdadeiro
-
-    def __str__(self):
-        status = "Disponível" if self.disponivel else "Emprestado"
-        return f"'{self.titulo}' por {self.autor} [{status}]"
+# Criando a exceção personalizada
+class SaldoInsuficienteError(Exception):
+    """Exceção lançada quando o valor do saque excede o saldo disponível."""
+    def __init__(self, saldo_atual, valor_saque):
+        self.saldo_atual = saldo_atual
+        self.valor_saque = valor_saque
+        super().__init__(f"Tentativa de sacar R${valor_saque:.2f} com saldo de apenas R${saldo_atual:.2f}")
 
 
-class Biblioteca:
-    def __init__(self, nome):
-        self.nome = nome
-        self.catalogo = []
+class ContaBancaria:
+    def __init__(self, titular, saldo_inicial=0.0):
+        self.titular = titular
+        self.saldo = saldo_inicial
 
-    def adicionar_livro(self, livro):
-        self.catalogo.append(livro)
-        print(f"✓ Livro '{livro.titulo}' cadastrado com sucesso.")
+    def sacar(self, valor):
+        print(f"\n--- Processando saque de R${valor:.2f} para {self.titular} ---")
+        if valor > self.saldo:
+            # Lança a nossa exceção customizada
+            raise SaldoInsuficienteError(self.saldo, valor)
+        
+        self.saldo -= valor
+        print(f"✓ Saque concluído! Novo saldo: R${self.saldo:.2f}")
 
-    def listar_livros(self):
-        print(f"\n--- Livros na Biblioteca {self.nome} ---")
-        if not self.catalogo:
-            print("Nenhum livro no acervo.")
-        else:
-            for livro in self.catalogo:
-                print(f" • {livro}")
 
-    def emprestar_livro(self, titulo):
-        for livro in self.catalogo:
-            if livro.titulo.lower() == titulo.lower():
-                if livro.disponivel:
-                    livro.disponivel = False
-                    print(f"📢 Sucesso: O livro '{livro.titulo}' foi emprestado.")
-                    return
-                else:
-                    print(f"❌ Erro: '{livro.titulo}' já está emprestado.")
-                    return
-        print(f"❌ Erro: O livro '{titulo}' não foi encontrado.")
+# --- Testando a Exceção Personalizada ---
+if __name__ == "__main__":
+    minha_conta = ContaBancaria("Gabriel Silva", saldo_inicial=500.0)
+    
+    # Tentativa 1: Saque válido
+    try:
+        minha_conta.sacar(200.0)
+    except SaldoInsuficienteError as erro:
+        print(f"Erro capturado: {erro}")
+
+    # Tentativa 2: Saque inválido (vai disparar o bloco except)
+    try:
+        minha_conta.sacar(400.0)
+    except SaldoInsuficienteError as erro:
+        print(f"❌ Operação Cancelada! {erro}")

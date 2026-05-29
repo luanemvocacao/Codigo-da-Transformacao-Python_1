@@ -1,13 +1,17 @@
-idade = int(input("Digite a sua idade: "))
+# Conjunto inicial de números
+numeros = [12, 7, 23, 44, 8, 15, 92, 31, 50]
 
-# Classificação por faixas etárias padrão
-if idade < 0:
-    print("Idade inválida.")
-elif idade <= 12:
-    print("Categoria: Criança")
-elif idade <= 17:
-    print("Categoria: Adolescente")
-elif idade <= 59:
-    print("Categoria: Adulto")
-else:
-    print("Categoria: Idoso")
+pares = []
+impares = []
+
+# Percorrendo o conjunto com um loop for
+for num in numeros:
+    if num % 2 == 0:
+        pares.append(num)
+    else:
+        impares.append(num)
+
+# Exibindo as categorias separadamente
+print(f"Lista original: {numeros}")
+print(f"Números Pares:  {pares}")
+print(f"Números Ímpares: {impares}")

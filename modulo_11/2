@@ -1,32 +1,43 @@
-# Modulo_10/atv2_exibir_dados.py
-import requests # type: ignore
+# Modulo_11/atv2_operacoes_crud.py
+import sqlite3
 
-def exibir_clima_filtrado(cidade):
-    API_KEY = "SUA_API_KEY_AQUI"
-    # Adicionado '&units=metric' para Celsius e '&lang=pt_br' para português
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={API_KEY}&units=metric&lang=pt_br"
+def rodar_crud():
+    conexao = sqlite3.connect("empresa.db")
+    cursor = conexao.cursor()
     
-    resposta = requests.get(url)
-    
-    if resposta.status_code == 200:
-        dados = resposta.json()
-        
-        # Filtrando informações específicas dentro do JSON
-        nome = dados["name"]
-        temp = dados["main"]["temp"]
-        umidade = dados["main"]["humidity"]
-        condicao = dados["weather"][0]["description"]
-        
-        # Exibindo os dados de forma organizada
-        print(f"\n====== CLIMA EM {nome.upper()} ======")
-        print(f"• Temperatura Atual: {temp}°C")
-        print(f"• Umidade do Ar: {umidade}%")
-        print(f"• Condição do Tempo: {condicao.capitalize()}")
-        print("================================")
-    else:
-        print("Não foi possível extrair os dados desta cidade.")
+    print("=== INICIANDO OPERAÇÕES CRUD ===")
+
+    # 1. INSERIR (Create)
+    print("\n[C] - Inserindo registros de teste...")
+    try:
+        cursor.execute("INSERT INTO Clientes (nome, email) VALUES (?, ?)", ("Carlos Souza", "carlos@email.com"))
+        cursor.execute("INSERT INTO Clientes (nome, email) VALUES (?, ?)", ("Ana Costa", "ana@email.com"))
+        conexao.commit()
+        print("✓ Registros adicionados.")
+    except sqlite3.IntegrityError:
+        print("ℹ Os registros de teste já existem no banco.")
+
+    # 2. CONSULTAR (Read)
+    print("\n[R] - Consultando dados cadastrados:")
+    cursor.execute("SELECT * FROM Clientes")
+    for linha in cursor.fetchall():
+        print(f"   ID: {linha[0]} | Nome: {linha[1]} | E-mail: {linha[2]}")
+
+    # 3. ATUALIZAR (Update)
+    print("\n[U] - Atualizando o e-mail da Ana Costa...")
+    cursor.execute("UPDATE Clientes SET email = ? WHERE nome = ?", ("ana.nova@email.com", "Ana Costa"))
+    conexao.commit()
+    print("✓ E-mail atualizado.")
+
+    # 4. DELETAR (Delete)
+    print("\n[D] - Deletando o registro do Carlos Souza...")
+    cursor.execute("DELETE FROM Clientes WHERE nome = ?", ("Carlos Souza",))
+    conexao.commit()
+    print("✓ Registro removido.")
+
+    # Fechando a conexão
+    conexao.close()
+    print("\n=== OPERAÇÕES CONCLUÍDAS ===")
 
 if __name__ == "__main__":
-    cidade_busca = input("Digite a cidade para filtrar os dados: ").strip()
-    if cidade_busca:
-        exibir_clima_filtrado(cidade_busca)
+    rodar_crud()

@@ -1,24 +1,24 @@
-# Modulo_11/atv1_criar_tabela.py
-import sqlite3
+# Modulo_12/atv1_test_soma.py
+import unittest
 
-def criar_tabela_clientes():
-    # Conecta ao arquivo de banco de dados (será criado se não existir)
-    conexao = sqlite3.connect("empresa.db")
-    cursor = conexao.cursor()
+# Função que realiza a operação de soma
+def somar(a, b):
+    return a + b
+
+# Classe de teste que herda de unittest.TestCase
+class TestSomaSimples(unittest.TestCase):
     
-    # Criando a tabela Clientes com as colunas especificadas
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS Clientes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE
-        )
-    """)
-    
-    # Salva as alterações e fecha a conexão
-    conexao.commit()
-    conexao.close()
-    print("✓ Banco de dados 'empresa.db' e tabela 'Clientes' criados com sucesso!")
+    def test_soma_positivos(self):
+        """Testa a soma de dois números positivos."""
+        self.assertEqual(somar(5, 3), 8)
+
+    def test_soma_negativos(self):
+        """Testa a soma de dois números negativos."""
+        self.assertEqual(somar(-2, -3), -5)
+
+    def test_soma_com_zero(self):
+        """Testa a soma onde um dos valores é zero."""
+        self.assertEqual(somar(0, 10), 10)
 
 if __name__ == "__main__":
-    criar_tabela_clientes()
+    unittest.main()

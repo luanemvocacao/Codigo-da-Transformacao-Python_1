@@ -1,29 +1,13 @@
-import csv
+from faker import Faker # pyright: ignore[reportMissingImports]
 
-nome_arquivo_csv = "notas_alunos.csv"
+# Inicializa o gerador em português do Brasil
+fake = Faker('pt_BR')
 
-# Dados dos alunos a serem adicionados
-novas_notas = [
-    ["Nome", "Matéria", "Nota"],  # Cabeçalho da tabela
-    ["Beatriz", "Matemática", "8.5"],
-    ["Thiago", "História", "7.0"],
-    ["Lucas", "Geografia", "9.2"],
-    ["Juliana", "Química", "6.8"]
-]
+print("=== GERADOR DE CADASTROS FICTÍCIOS ===")
 
-# 1. Escrevendo os dados no arquivo CSV
-with open(nome_arquivo_csv, "w", newline="", encoding="utf-8") as arquivo:
-    escritor = csv.writer(arquivo)
-    escritor.writerows(novas_notas)
-
-print(f"Sistema de notas atualizado e salvo em '{nome_arquivo_csv}'.\n")
-
-# 2. Carregando e exibindo as informações do CSV
-print("--- Boletim Escolar (Lido do CSV) ---")
-with open(nome_arquivo_csv, "r", encoding="utf-8") as arquivo:
-    leitor = csv.reader(arquivo)
-    
-    for linha in leitor:
-        # Exibe os dados separados por uma tabulação fixa para alinhar as colunas
-        print(f"{linha[0]:<12} | {linha[1]:<12} | Nota: {linha[2]}")
-print("-------------------------------------")
+for i in range(1, 4):
+    print(f"\n--- Usuário {i} ---")
+    print(f"Nome: {fake.name()}")
+    print(f"CPF: {fake.cpf()}")
+    print(f"Cidade: {fake.city()}")
+    print(f"E-mail: {fake.email()}")

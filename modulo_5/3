@@ -1,17 +1,18 @@
-# Conjunto inicial de números
-numeros = [12, 7, 23, 44, 8, 15, 92, 31, 50]
+def maior_menor(lista_numeros):
+    """Retorna o maior e o menor valor encontrados em uma lista."""
+    if not lista_numeros:
+        return None, None
+        
+    maior = max(lista_numeros)
+    menor = min(lista_numeros)
+    return maior, menor
 
-pares = []
-impares = []
+# --- Testando a função ---
+valores = [42, 7, 19, 99, 3, 50]
+print(f"Lista analisada: {valores}")
 
-# Percorrendo o conjunto com um loop for
-for num in numeros:
-    if num % 2 == 0:
-        pares.append(num)
-    else:
-        impares.append(num)
+# Recebendo os dois valores retornados pela função
+resultado_maior, resultado_menor = maior_menor(valores)
 
-# Exibindo as categorias separadamente
-print(f"Lista original: {numeros}")
-print(f"Números Pares:  {pares}")
-print(f"Números Ímpares: {impares}")
+print(f"O maior número é: {resultado_maior}")
+print(f"O menor número é: {resultado_menor}")

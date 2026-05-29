@@ -1,25 +1,9 @@
-import json
+from utilidades import soma, subtracao, potencia # type: ignore
 
-# Dicionário de clientes simulado
-clientes = {
-    "cliente_1": {"nome": "Carlos Souza", "email": "carlos@email.com", "ativo": True},
-    "cliente_2": {"nome": "Ana Costa", "email": "ana.costa@email.com", "ativo": False},
-    "cliente_3": {"nome": "Mariana Lima", "email": "mariana@email.com", "ativo": True}
-}
+print("=== TESTANDO MÓDULO PERSONALIZADO ===")
+n1 = 10
+n2 = 3
 
-nome_arquivo_json = "clientes.json"
-
-# 1. Salvando o dicionário no arquivo JSON
-with open(nome_arquivo_json, "w", encoding="utf-8") as arquivo:
-    # indent=4 serve para deixar o arquivo visualmente organizado
-    json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
-
-print(f"Dados de clientes salvos em '{nome_arquivo_json}'.\n")
-
-# 2. Carregando e exibindo os dados do arquivo JSON
-with open(nome_arquivo_json, "r", encoding="utf-8") as arquivo:
-    dados_carregados = json.load(arquivo)
-
-print("--- Dados Carregados do JSON ---")
-for chave, info in dados_carregados.items():
-    print(f"ID: {chave} | Nome: {info['nome']} | E-mail: {info['email']} | Ativo: {info['ativo']}")
+print(f"Soma ({n1} + {n2}): {soma(n1, n2)}")
+print(f"Subtração ({n1} - {n2}): {subtracao(n1, n2)}")
+print(f"Potência ({n1} elevado a {n2}): {potencia(n1, n2)}")

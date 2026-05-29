@@ -1,18 +1,29 @@
-def maior_menor(lista_numeros):
-    """Retorna o maior e o menor valor encontrados em uma lista."""
-    if not lista_numeros:
-        return None, None
-        
-    maior = max(lista_numeros)
-    menor = min(lista_numeros)
-    return maior, menor
+import csv
 
-# --- Testando a função ---
-valores = [42, 7, 19, 99, 3, 50]
-print(f"Lista analisada: {valores}")
+nome_arquivo_csv = "notas_alunos.csv"
 
-# Recebendo os dois valores retornados pela função
-resultado_maior, resultado_menor = maior_menor(valores)
+# Dados dos alunos a serem adicionados
+novas_notas = [
+    ["Nome", "Matéria", "Nota"],  # Cabeçalho da tabela
+    ["Beatriz", "Matemática", "8.5"],
+    ["Thiago", "História", "7.0"],
+    ["Lucas", "Geografia", "9.2"],
+    ["Juliana", "Química", "6.8"]
+]
 
-print(f"O maior número é: {resultado_maior}")
-print(f"O menor número é: {resultado_menor}")
+# 1. Escrevendo os dados no arquivo CSV
+with open(nome_arquivo_csv, "w", newline="", encoding="utf-8") as arquivo:
+    escritor = csv.writer(arquivo)
+    escritor.writerows(novas_notas)
+
+print(f"Sistema de notas atualizado e salvo em '{nome_arquivo_csv}'.\n")
+
+# 2. Carregando e exibindo as informações do CSV
+print("--- Boletim Escolar (Lido do CSV) ---")
+with open(nome_arquivo_csv, "r", encoding="utf-8") as arquivo:
+    leitor = csv.reader(arquivo)
+    
+    for linha in leitor:
+        # Exibe os dados separados por uma tabulação fixa para alinhar as colunas
+        print(f"{linha[0]:<12} | {linha[1]:<12} | Nota: {linha[2]}")
+print("-------------------------------------")

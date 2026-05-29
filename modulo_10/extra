@@ -1,38 +1,57 @@
-# Módulo_09/sistema_login_bloqueio.py
+# Modulo_10/busca_filmes.py
+import requests # type: ignore
 
-# Banco de dados simulado
-CREDENCIAIS_VALIDAS = {
-    "aluno_vocacao": "python123",
-    "admin": "root2026"
-}
-
-class ContaBloqueadaError(Exception):
-    """Exceção disparada quando o limite de tentativas de login estoura."""
-    pass
-
-def realizar_login():
-    tentativas_restantes = 3
-    print("====== SISTEMA DE LOGIN SEGURO ======")
+def buscar_filme(nome_filme):
+    # Caso não possua chave, use esta URL alternativa mockada/demonstrativa para testes, 
+    # ou insira sua chave válida do TMDB abaixo.
+    API_KEY = "SUA_TMDB_API_KEY_AQUI"
+    url = f"https://api.themoviedb.org/3/search/movie"
     
-    while tentativas_restantes > 0:
-        try:
-            usuario = input("\nDigite o usuário: ").strip()
-            senha = input("Digite a senha: ").strip()
-            
-            # Validação das credenciais
-            if usuario in CREDENCIAIS_VALIDAS and CREDENCIAIS_VALIDAS[usuario] == str(senha):
-                print(f"\n🔓 [Acesso Permitido] Bem-vindo, {usuario}!")
-                return
-            else:
-                tentativas_restantes -= 1
-                if tentativas_restantes == 0:
-                    raise ContaBloqueadaError("Número máximo de tentativas excedido! Conta temporariamente bloqueada.")
-                
-                print(f"❌ Usuário ou senha incorretos! Você tem mais {tentativas_restantes} tentativa(s).")
-                
-        except ContaBloqueadaError as erro_bloqueio:
-            print(f"\n🚨 {erro_bloqueio}")
+    parametros = {
+        "api_key": API_KEY,
+        "query": nome_filme,
+        "language": "pt-BR"
+    }
+    
+    print(f"\nBuscando informações sobre o filme: '{nome_filme}'...")
+    
+    try:
+        resposta = requests.get(url, params=parametros, timeout=10)
+        resposta.raise_for_status()
+        
+        dados = resposta.json()
+        resultados = dados.get("results", [])
+        
+        if not resultados:
+            print("❌ Nenhum filme encontrado com esse nome.")
             return
+            
+        # Pega o primeiro resultado mais relevante retornado pela busca
+        primeiro_filme = resultados[0]
+        
+        titulo = primeiro_filme.get("title", "Sem título")
+        titulo_original = primeiro_filme.get("original_title", "Sem título original")
+        data_lancamento = primeiro_filme.get("release_date", "Desconhecida")
+        sinopse = primeiro_filme.get("overview", "Sinopse não disponível em português.")
+        nota_avaliacao = primeiro_filme.get("vote_average", 0.0)
+
+        # Exibição dos dados obtidos da API
+        print("=" * 50)
+        print(f"🎬 Filme: {titulo}")
+        print(f"   Título Original: {titulo_original}")
+        print(f"   Lançamento: {data_lancamento} | Avaliação: ⭐ {nota_avaliacao:.1f}/10")
+        print("=" * 50)
+        print(f"📝 Sinopse:\n{sinopse if sinopse else 'Sem descrição disponível.'}")
+        print("=" * 50)
+
+    except requests.exceptions.HTTPError:
+        print("❌ Erro na requisição. Verifique sua chave de acesso da API do TMDB.")
+    except requests.exceptions.ConnectionError:
+        print("❌ Erro de rede: Não foi possível conectar ao servidor do TMDB.")
+    except Exception as e:
+        print(f"❌ Ocorreu um erro: {e}")
 
 if __name__ == "__main__":
-    realizar_login()
+    filme_usuario = input("Digite o nome de um filme para pesquisar: ").strip()
+    if filme_usuario:
+        buscar_filme(filme_usuario)

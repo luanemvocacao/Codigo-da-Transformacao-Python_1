@@ -1,34 +1,29 @@
-import os
-import shutil
+import random
+import math
 
-# Definição dos nomes das pastas
-diretorio_origem = "pasta_importante"
-diretorio_backup = "pasta_backup"
+numero_secreto = random.randint(1, 100)
+tentativas = 0
 
-# Criação das pastas de teste caso elas não existam
-os.makedirs(diretorio_origem, exist_ok=True)
-os.makedirs(diretorio_backup, exist_ok=True)
+print("==================================================")
+print("  BEM-VINDO AO JOGO DE ADIVINHAÇÃO (1 A 100)      ")
+print("==================================================")
 
-# Criando 3 arquivos fictícios dentro da pasta importante para simular dados reais
-for i in range(1, 4):
-    with open(f"{diretorio_origem}/documento_{i}.txt", "w") as f:
-        f.write(f"Conteúdo confidencial do documento {i}")
-
-print("=== INICIANDO SISTEMA DE BACKUP AUTOMÁTICO ===")
-
-# Listando os arquivos da pasta de origem
-arquivos = os.listdir(diretorio_origem)
-
-if not arquivos:
-    print("A pasta de origem está vazia. Nada para copiar.")
-else:
-    for arquivo in arquivos:
-        # Monta o caminho completo de origem e de destino
-        caminho_origem = os.path.join(diretorio_origem, arquivo)
-        caminho_destino = os.path.join(diretorio_backup, arquivo)
+while True:
+    try:
+        palpite = int(input("\nDigite o seu palpite: "))
+        tentativas += 1
         
-        # Realiza a cópia do arquivo usando a biblioteca shutil
-        shutil.copy(caminho_origem, caminho_destino)
-        print(f"✓ Cópia feita: {arquivo} -> enviado para {diretorio_backup}/")
-
-print("\n[Sucesso] Todos os arquivos importantes foram salvos na pasta de backup!")
+        if palpite == numero_secreto:
+            print(f"🎉 PARABÉNS! Você acertou em {tentativas} tentativas!")
+            break
+        elif palpite < numero_secreto:
+            print("O número secreto é MAIOR.")
+        else:
+            print("O número secreto é MENOR.")
+            
+        distancia = int(math.fabs(palpite - numero_secreto))
+        if distancia <= 5:
+            print("🔥 Dica: Você está MUITO perto (diferença de 5 números ou menos)!")
+            
+    except ValueError:
+        print("[Erro] Por favor, digite um número inteiro válido.")

@@ -1,60 +1,40 @@
-# Modulo_13/atv3_integracao_sqlite.py
-import sqlite3
-from flask import Flask, jsonify, request # type: ignore
+# Modulo_14/produtos/views.py
+from django.shortcuts import render, redirect, get_object_or_404 # type: ignore
+from .models import Produto # type: ignore
 
-app = Flask(__name__)
-DB_NAME = "banco_usuarios.db"
+# LISTAGEM DE PRODUTOS
+def listar_produtos(request):
+    produtos = Produto.objects.all().order_by('nome')
+    return render(request, 'produtos/listar.html', {'produtos': produtos})
 
-def inicializar_banco():
-    """Garante a infraestrutura inicial e cria a tabela se não existir."""
-    conexao = sqlite3.connect(DB_NAME)
-    cursor = conexao.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS Usuarios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE
+# CADASTRO DE NOVO PRODUTO
+def cadastrar_produto(request):
+    if request.method == "POST":
+        Produto.objects.create(
+            nome=request.POST.get('nome'),
+            descricao=request.POST.get('descricao'),
+            preco=request.POST.get('preco'),
+            quantidade=request.POST.get('quantidade')
         )
-    """)
-    conexao.commit()
-    conexao.close()
+        return redirect('listar_produtos')
+    return render(request, 'produtos/formulario.html')
 
-@app.route('/cadastrar', methods=['POST'])
-def cadastrar_usuario_no_banco():
-    """Intermedeia a rota POST e armazena as chaves no banco SQLite."""
-    dados = request.get_json()
-    
-    # Validação padrão
-    if not dados or "nome" not in dados or "email" not in dados:
-        return jsonify({"erro": "Dados insuficientes para o cadastro."}), 400
-        
-    nome = dados["nome"].strip()
-    email = dados["email"].strip()
-    
-    if nome == "" or email == "":
-        return jsonify({"erro": "Os campos de texto não podem estar vazios."}), 400
+# ATUALIZAÇÃO DE PRODUTO EXISTENTE
+def atualizar_produto(request, pk):
+    produto = get_object_or_404(Produto, pk=pk)
+    if request.method == "POST":
+        produto.nome = request.POST.get('nome')
+        produto.descricao = request.POST.get('descricao')
+        produto.preco = request.POST.get('preco')
+        produto.quantidade = request.POST.get('quantidade')
+        produto.save()
+        return redirect('listar_produtos')
+    return render(request, 'produtos/formulario.html', {'produto': produto})
 
-    try:
-        # Conexão interna com o banco de dados
-        conexao = sqlite3.connect(DB_NAME)
-        cursor = conexao.cursor()
-        
-        # Insere o novo usuário usando Prepared Statements contra SQL Injection
-        cursor.execute("INSERT INTO Usuarios (nome, email) VALUES (?, ?)", (nome, email))
-        conexao.commit()
-        conexao.close()
-        
-        return jsonify({
-            "mensagem": "Usuário persistido no banco de dados com sucesso!",
-            "cadastro": {"nome": nome, "email": email}
-        }), 201
-        
-    except sqlite3.IntegrityError:
-        # Trata o erro caso o e-mail (campo UNIQUE) já exista na tabela
-        return jsonify({"erro": "O e-mail fornecido já encontra-se registrado."}), 409
-    except Exception as e:
-        return jsonify({"erro": f"Erro interno do servidor: {str(e)}"}), 500
-
-if __name__ == "__main__":
-    inicializar_banco()  # Executa a checagem da tabela antes de erguer o servidor
-    app.run(debug=True)
+# EXCLUSÃO DE PRODUTO
+def excluir_produto(request, pk):
+    produto = get_object_or_404(Produto, pk=pk)
+    if request.method == "POST":
+        produto.delete()
+        return redirect('listar_produtos')
+    return render(request, 'produtos/confirmar_exclusao.html', {'produto': produto})

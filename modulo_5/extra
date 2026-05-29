@@ -1,48 +1,27 @@
-agenda = {}
+# Banco de dados simulado contendo usuários e suas respectivas senhas
+usuarios_cadastrados = {
+    "admin": "1234",
+    "gabriel": "python99",
+    "maria_silva": "senhaSegura!2"
+}
 
-while True:
-    print("\n======== AGENDA DE CONTATOS ========")
-    print("1. Adicionar Contato")
-    print("2. Remover Contato")
-    print("3. Buscar Contato")
-    print("4. Listar Todos os Contatos")
-    print("5. Sair")
-    print("====================================")
-    
-    opcao = input("Escolha uma opção (1-5): ")
-    
-    if opcao == "1":
-        nome = input("Digite o nome do contato: ").strip()
-        if nome:
-            telefone = input(f"Digite o telefone de {nome}: ").strip()
-            agenda[nome] = telefone
-            print(f"Contato '{nome}' adicionado/atualizado com sucesso!")
+def validar_login(usuario, senha):
+    """Valida se as credenciais existem e coincidem com o banco de dados."""
+    # Verifica se o usuário existe nas chaves do dicionário
+    if usuario in usuarios_cadastrados:
+        # Se existir, valida se a senha informada bate com a cadastrada
+        if usuarios_cadastrados[usuario] == senha:
+            return True
             
-    elif opcao == "2":
-        nome = input("Digite o nome do contato que deseja remover: ").strip()
-        if nome in agenda:
-            del agenda[nome]
-            print(f"Contato '{nome}' removido com sucesso!")
-        else:
-            print(f"O contato '{nome}' não foi encontrado.")
-            
-    elif opcao == "3":
-        nome = input("Digite o nome do contato que deseja buscar: ").strip()
-        if nome in agenda:
-            print(f"\n🔍 Contato Encontrado -> Nome: {nome} | Telefone: {agenda[nome]}")
-        else:
-            print(f"O contato '{nome}' não existe na agenda.")
-            
-    elif opcao == "4":
-        if not agenda:
-            print("\nA agenda está vazia.")
-        else:
-            print("\n--- Lista de Contatos ---")
-            for nome, telefone in agenda.items():
-                print(f"• {nome}: {telefone}")
-                
-    elif opcao == "5":
-        print("Saindo da agenda... Até mais!")
-        break
-    else:
-        print("Opção inválida! Por favor, escolha um número de 1 a 5.")
+    return False
+
+# --- Fluxo de Execução do Sistema ---
+print("====== SISTEMA DE ACESSO ======")
+user_input = input("Usuário: ").strip()
+password_input = input("Senha: ").strip()
+
+# Chamada da função passando os dados digitados
+if validar_login(user_input, password_input):
+    print(f"\n[Acesso Permitido] Bem-vindo de volta, {user_input}!")
+else:
+    print("\n[Erro de Autenticação] Usuário ou senha incorretos.")

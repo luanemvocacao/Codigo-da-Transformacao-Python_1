@@ -1,27 +1,48 @@
+agenda = {}
+
 while True:
-    print("\n========= MENU =========")
-    print("1. Soma")
-    print("2. Subtração")
-    print("3. Sair")
-    print("========================")
+    print("\n======== AGENDA DE CONTATOS ========")
+    print("1. Adicionar Contato")
+    print("2. Remover Contato")
+    print("3. Buscar Contato")
+    print("4. Listar Todos os Contatos")
+    print("5. Sair")
+    print("====================================")
     
-    opcao = input("Escolha uma opção (1/2/3): ")
+    opcao = input("Escolha uma opção (1-5): ")
     
-    if opcao == "3":
-        print("Saindo do programa... Até logo!")
-        break  # Encerra o loop while
-        
-    elif opcao == "1" or opcao == "2":
-        # Se escolheu uma operação válida, pede os números
-        v1 = float(input("Digite o primeiro número: "))
-        v2 = float(input("Digite o segundo número: "))
-        
-        if opcao == "1":
-            resultado = v1 + v2
-            print(f"\n> Resultado da Soma: {v1} + {v2} = {resultado}")
-        elif opcao == "2":
-            resultado = v1 - v2
-            print(f"\n> Resultado da Subtração: {v1} - {v2} = {resultado}")
+    if opcao == "1":
+        nome = input("Digite o nome do contato: ").strip()
+        if nome:
+            telefone = input(f"Digite o telefone de {nome}: ").strip()
+            agenda[nome] = telefone
+            print(f"Contato '{nome}' adicionado/atualizado com sucesso!")
             
+    elif opcao == "2":
+        nome = input("Digite o nome do contato que deseja remover: ").strip()
+        if nome in agenda:
+            del agenda[nome]
+            print(f"Contato '{nome}' removido com sucesso!")
+        else:
+            print(f"O contato '{nome}' não foi encontrado.")
+            
+    elif opcao == "3":
+        nome = input("Digite o nome do contato que deseja buscar: ").strip()
+        if nome in agenda:
+            print(f"\n🔍 Contato Encontrado -> Nome: {nome} | Telefone: {agenda[nome]}")
+        else:
+            print(f"O contato '{nome}' não existe na agenda.")
+            
+    elif opcao == "4":
+        if not agenda:
+            print("\nA agenda está vazia.")
+        else:
+            print("\n--- Lista de Contatos ---")
+            for nome, telefone in agenda.items():
+                print(f"• {nome}: {telefone}")
+                
+    elif opcao == "5":
+        print("Saindo da agenda... Até mais!")
+        break
     else:
-        print("\n[Erro] Opção inválida! Tente novamente.")
+        print("Opção inválida! Por favor, escolha um número de 1 a 5.")
